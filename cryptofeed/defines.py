@@ -62,6 +62,7 @@ TRANSACTIONS = 'transactions'
 
 # Account Data / Authenticated Channels
 ORDER_INFO = 'order_info'
+TRADE_INFO = 'trade_info'
 
 
 BUY = 'buy'
