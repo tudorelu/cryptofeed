@@ -7,7 +7,8 @@ associated with this software.
 import logging
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -53,7 +54,8 @@ class HitBTC(Feed):
 
     async def _snapshot(self, msg: dict, timestamp: float):
         pair = symbol_exchange_to_std(msg['symbol'])
-        self.l2_book[pair] = {ASK: sd(), BID: sd()}
+        self.l2_book[pair] = OrderBook(max_depth = self.max_depth)
+
         for side in (BID, ASK):
             for entry in msg[side]:
                 price = Decimal(entry['price'])

@@ -9,7 +9,8 @@ from decimal import Decimal
 from functools import partial
 from typing import List, Callable, Tuple
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection

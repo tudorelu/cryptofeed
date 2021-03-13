@@ -7,7 +7,8 @@ associated with this software.
 import logging
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -130,7 +131,8 @@ class Probit(Feed):
         is_snapshot = msg.get('reset', False)
 
         if is_snapshot:
-            self.l2_book[pair] = {ASK: sd(), BID: sd()}
+            self.l2_book[pair] = OrderBook(max_depth = self.max_depth)
+
 
             for entry in msg["order_books"]:
                 price = Decimal(entry['price'])

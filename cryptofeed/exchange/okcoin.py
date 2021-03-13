@@ -9,7 +9,8 @@ from itertools import islice
 import logging
 import zlib
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection

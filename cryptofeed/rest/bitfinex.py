@@ -13,7 +13,8 @@ from time import sleep
 
 import pandas as pd
 import requests
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.defines import BID, ASK, BITFINEX, BUY, SELL
@@ -182,12 +183,14 @@ class Bitfinex(API):
         funding = False
 
         if '-' not in symbol:
-            ret[symbol] = {BID: sd(), ASK: sd()}
+            ret[symbol] = OrderBook(max_depth = self.max_depth)
+
             symbol = f"f{symbol}"
             funding = True
         else:
             symbol = symbol_std_to_exchange(symbol, self.ID)
-            ret[symbol] = {BID: sd(), ASK: sd()}
+            ret[symbol] = OrderBook(max_depth = self.max_depth)
+
             sym = symbol
 
         @request_retry(self.ID, retry, retry_wait)

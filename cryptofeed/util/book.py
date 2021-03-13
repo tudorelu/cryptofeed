@@ -7,26 +7,10 @@ associated with this software.
 
 A set of helper functions for regulating book depth
 '''
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 
 from cryptofeed.defines import BID, ASK, L2_BOOK
-
-
-def depth(book: dict, depth: int, book_type=L2_BOOK) -> dict:
-    """
-    Take a book and return a new dict with max `depth` levels per side
-    """
-    ret = {BID: sd(), ASK: sd()}
-    for side in (BID, ASK):
-        prices = list(book[side].keys())[:depth] if side == ASK else list(book[side].keys())[-depth:]
-        if book_type == L2_BOOK:
-            for price in prices:
-                ret[side][price] = book[side][price]
-        else:
-            for price in prices:
-                ret[side][price] = {order_id: size for order_id, size in ret[side][price].items()}
-
-    return ret
 
 
 def book_delta(former: dict, latter: dict, book_type=L2_BOOK) -> list:

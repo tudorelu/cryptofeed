@@ -1,7 +1,8 @@
 import logging
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection

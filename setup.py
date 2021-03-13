@@ -62,7 +62,7 @@ setup(
     install_requires=[
         "requests>=2.18.4",
         "websockets>=7.0",
-        "sortedcontainers>=1.5.9",
+        "order_book>=0.2.0",
         "pandas",
         "pyyaml",
         "aiohttp>=3.7.1, < 4.0.0",

@@ -9,7 +9,8 @@ import logging
 import time
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -109,7 +110,8 @@ class Poloniex(Feed):
             forced = True
             pair = msg[0][1]['currencyPair']
             pair = symbol_exchange_to_std(pair)
-            self.l2_book[pair] = {BID: sd(), ASK: sd()}
+            self.l2_book[pair] = OrderBook(max_depth = self.max_depth)
+
             # 0 is asks, 1 is bids
             order_book = msg[0][1]['orderBook']
             for key in order_book[0]:

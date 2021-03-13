@@ -8,7 +8,8 @@ import logging
 from decimal import Decimal
 from typing import List, Tuple, Callable
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.auth.gemini import generate_token
@@ -30,7 +31,8 @@ class Gemini(Feed):
 
     def __reset(self, pairs):
         for pair in pairs:
-            self.l2_book[symbol_exchange_to_std(pair)] = {BID: sd(), ASK: sd()}
+            self.l2_book[symbol_exchange_to_std(pair)] = OrderBook(max_depth = self.max_depth)
+
 
     async def _book(self, msg: dict, timestamp: float):
         pair = symbol_exchange_to_std(msg['symbol'])

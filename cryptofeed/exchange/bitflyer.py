@@ -7,7 +7,8 @@ associated with this software.
 import logging
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -136,7 +137,8 @@ class Bitflyer(Feed):
         if snapshot:
             if not forced:
                 self.previous_book[pair] = self.l2_book[pair]
-            self.l2_book[pair] = {BID: sd(), ASK: sd()}
+            self.l2_book[pair] = OrderBook(max_depth = self.max_depth)
+
             delta = None
         else:
             delta = {BID: [], ASK: []}

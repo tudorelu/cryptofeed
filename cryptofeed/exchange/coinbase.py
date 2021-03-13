@@ -10,7 +10,8 @@ import time
 from decimal import Decimal
 
 import requests
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -204,7 +205,8 @@ class Coinbase(Feed):
         for res, pair in zip(results, pairs):
             orders = res.json()
             npair = symbol_exchange_to_std(pair)
-            self.l3_book[npair] = {BID: sd(), ASK: sd()}
+            self.l3_book[npair] = OrderBook(max_depth = self.max_depth)
+
             self.seq_no[npair] = orders['sequence']
             for side in (BID, ASK):
                 for price, size, order_id in orders[side + 's']:

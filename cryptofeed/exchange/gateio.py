@@ -7,7 +7,8 @@ associated with this software.
 import logging
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -117,7 +118,8 @@ class Gateio(Feed):
         delta = {BID: [], ASK: []}
 
         if forced:
-            self.l2_book[symbol] = {BID: sd(), ASK: sd()}
+            self.l2_book[symbol] = OrderBook(max_depth = self.max_depth)
+
         data = msg['params'][1]
 
         for side, exchange_key in [(BID, 'bids'), (ASK, 'asks')]:

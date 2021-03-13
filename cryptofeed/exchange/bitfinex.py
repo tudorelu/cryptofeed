@@ -10,7 +10,8 @@ from functools import partial
 import logging
 from typing import Callable, List, Tuple
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -134,8 +135,8 @@ class Bitfinex(Feed):
         if isinstance(msg[1][0], list):
             # snapshot so clear book
             forced = True
-            l2_book[BID] = sd()
-            l2_book[ASK] = sd()
+            l2_book = OrderBook(max_depth = self.max_depth)
+
             for update in msg[1]:
                 price, _, amount = update
                 price = Decimal(price)
@@ -198,8 +199,8 @@ class Bitfinex(Feed):
             forced = True
             order_map[BID] = {}
             order_map[ASK] = {}
-            l3_book[BID] = sd()
-            l3_book[ASK] = sd()
+            l3_book = OrderBook(max_depth = self.max_depth)
+
 
             for update in msg[1]:
                 order_id, price, amount = update

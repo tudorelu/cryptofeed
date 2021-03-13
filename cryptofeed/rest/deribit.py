@@ -3,7 +3,8 @@ from time import sleep
 
 import pandas as pd
 import requests
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 
 from cryptofeed.defines import BID, ASK, BUY, DERIBIT, SELL
 from cryptofeed.rest.api import API, request_retry
@@ -97,7 +98,8 @@ class Deribit(API):
     def _book(self, symbol: str, retry=0, retry_wait=0):
         ret = {}
         symbol = symbol_std_to_exchange(symbol, self.ID)
-        ret[symbol] = {BID: sd(), ASK: sd()}
+        ret[symbol] = OrderBook(max_depth = self.max_depth)
+
 
         @request_retry(self.ID, retry, retry_wait)
         def helper():
@@ -126,4 +128,5 @@ class Deribit(API):
                 price, amount = entry_bid
                 ret[symbol][side][price] = amount
 
+        ret[symbol] = ret[symbol].to_dict()
         return ret

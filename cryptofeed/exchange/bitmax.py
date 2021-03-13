@@ -8,7 +8,8 @@ from collections import defaultdict
 import logging
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.defines import BID, ASK, BITMAX, BUY, L2_BOOK, SELL, TRADES
@@ -64,7 +65,8 @@ class Bitmax(Feed):
         if msg['m'] == 'depth-snapshot':
             forced = True
             self.seq_no[pair] = sequence_number
-            self.l2_book[pair] = {BID: sd(), ASK: sd()}
+            self.l2_book[pair] = OrderBook(max_depth = self.max_depth)
+
         else:
             # ignore messages while we wait for the snapshot
             if self.seq_no[pair] is None:

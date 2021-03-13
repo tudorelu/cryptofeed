@@ -17,10 +17,10 @@ import pandas as pd
 from cryptofeed.defines import (BINANCE, BINANCE_DELIVERY, BINANCE_FUTURES, BINANCE_US, BITCOINCOM, BITFLYER, BITFINEX, BITMAX, BITMEX,
                                 BITSTAMP, BITTREX, BLOCKCHAIN, BYBIT, COINBASE, COINGECKO,
                                 DERIBIT, EXX, FTX, FTX_US, GATEIO, GEMINI, HITBTC, HUOBI, HUOBI_DM, HUOBI_SWAP,
-                                KRAKEN, KRAKEN_FUTURES, OKCOIN, OKEX, POLONIEX, PROBIT, UPBIT, WHALE_ALERT)
+                                KRAKEN, KRAKEN_FUTURES, OKCOIN, OKEX, POLONIEX, PROBIT, TRADE_INFO, UPBIT, WHALE_ALERT)
 from cryptofeed.defines import (FILL_OR_KILL, IMMEDIATE_OR_CANCEL, LIMIT, MAKER_OR_CANCEL, MARKET, UNSUPPORTED)
 from cryptofeed.defines import (FUNDING, FUTURES_INDEX, L2_BOOK, L3_BOOK, LIQUIDATIONS, OPEN_INTEREST, MARKET_INFO,
-                                TICKER, TRADES, TRANSACTIONS, VOLUME, ORDER_INFO)
+                                TICKER, TRADES, TRANSACTIONS, VOLUME, ORDER_INFO, TRADE_INFO)
 from cryptofeed.exceptions import UnsupportedDataFeed, UnsupportedTradingOption, UnsupportedSymbol
 from cryptofeed.symbols import gen_symbols, _exchange_info
 
@@ -322,4 +322,4 @@ def feed_to_exchange(exchange, feed, silent=False):
 
 
 def is_authenticated_channel(channel: str) -> bool:
-    return channel in (ORDER_INFO)
+    return channel in (ORDER_INFO, TRADE_INFO)

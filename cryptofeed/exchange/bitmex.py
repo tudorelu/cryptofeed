@@ -13,7 +13,8 @@ from collections import defaultdict
 from datetime import datetime as dt
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.defines import BID, ASK, BITMEX, BUY, FUNDING, L2_BOOK, LIQUIDATIONS, OPEN_INTEREST, SELL, TICKER, TRADES
@@ -37,7 +38,8 @@ class Bitmex(Feed):
         self.order_id = {}
         for pair in self.normalized_symbols:
             pair = symbol_exchange_to_std(pair)
-            self.l2_book[pair] = {BID: sd(), ASK: sd()}
+            self.l2_book[pair] = OrderBook(max_depth = self.max_depth)
+
             self.order_id[pair] = defaultdict(dict)
 
     async def _trade(self, msg: dict, timestamp: float):

@@ -7,7 +7,8 @@ associated with this software.
 import logging
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -38,7 +39,8 @@ class Blockchain(Feed):
         forced = False
         if msg['event'] == 'snapshot':
             # Reset the book
-            self.l2_book[pair] = {BID: sd(), ASK: sd()}
+            self.l2_book[pair] = OrderBook(max_depth = self.max_depth)
+
             forced = True
         book = self.l2_book[pair]
 
@@ -80,7 +82,8 @@ class Blockchain(Feed):
 
         if msg['event'] == 'snapshot':
             # Reset the book
-            self.l3_book[pair] = {BID: sd(), ASK: sd()}
+            self.l3_book[pair] = OrderBook(max_depth = self.max_depth)
+
 
         book = self.l3_book[pair]
 
@@ -90,7 +93,7 @@ class Blockchain(Feed):
                 qty = update['qty']
                 order_id = update['id']
 
-                p_orders = book[side].get(price, sd())
+                p_orders = book[side].get(price, {})
                 p_orders[order_id] = qty
                 if qty <= 0:
                     del p_orders[order_id]

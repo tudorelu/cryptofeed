@@ -16,7 +16,8 @@ from urllib.parse import urlparse
 
 import pandas as pd
 import requests
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 
 from cryptofeed.defines import BID, ASK, BITMEX, BUY, SELL
 from cryptofeed.rest.api import API, request_retry
@@ -201,12 +202,13 @@ class Bitmex(API):
             yield list(map(self._funding_normalization, data))
 
     def l2_book(self, symbol: str, retry=None, retry_wait=10):
-        ret = {symbol: {BID: sd(), ASK: sd()}}
+        ret = OrderBook(max_depth = self.max_depth)
+
         data = next(self._get('orderBook/L2', symbol, None, None, retry, retry_wait))
         for update in data:
             side = ASK if update['side'] == 'Sell' else BID
-            ret[symbol][side][update['price']] = update['size']
-        return ret
+            ret[side][update['price']] = update['size']
+        return {symbol: ret.to_dict()}
 
     def _s3_data_normalization(self, data):
         vals = data.split(",")

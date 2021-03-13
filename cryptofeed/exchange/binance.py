@@ -9,7 +9,7 @@ from collections import defaultdict
 from decimal import Decimal
 from typing import Dict, Union, Tuple
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -172,9 +172,10 @@ class Binance(Feed):
 
         std_pair = symbol_exchange_to_std(pair)
         self.last_update_id[std_pair] = resp['lastUpdateId']
-        self.l2_book[std_pair] = {BID: sd(), ASK: sd()}
-        for s, side in (('bids', BID), ('asks', ASK)):
-            for update in resp[s]:
+        self.l2_book[std_pair] = OrderBook(max_depth = self.max_depth)
+
+        for side in ('bids', 'asks'):
+            for update in resp[side]:
                 price = Decimal(update[0])
                 amount = Decimal(update[1])
                 self.l2_book[std_pair][side][price] = amount

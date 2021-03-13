@@ -7,7 +7,7 @@ associated with this software.
 import logging
 from decimal import Decimal
 
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -66,14 +66,11 @@ class BitcoinCom(Feed):
 
     async def _book_snapshot(self, msg: dict, timestamp: float):
         pair = symbol_exchange_to_std(msg['symbol'])
-        self.l2_book[pair] = {
-            BID: sd({
-                Decimal(bid['price']): Decimal(bid['size']) for bid in msg['bid']
-            }),
-            ASK: sd({
-                Decimal(ask['price']): Decimal(ask['size']) for ask in msg['ask']
-            })
-        }
+        self.l2_book[pair] = OrderBook(max_depth = self.max_depth)
+
+        self.l2_book[pair].bids = {Decimal(bid['price']): Decimal(bid['size']) for bid in msg['bid']}
+        self.l2_book[pair].asks = {Decimal(ask['price']): Decimal(ask['size']) for ask in msg['ask']}
+
         await self.book_callback(self.l2_book[pair], L2_BOOK, pair, True, None, timestamp_normalize(self.id, msg['timestamp']), timestamp)
 
     async def _book_update(self, msg: dict, timestamp: float):

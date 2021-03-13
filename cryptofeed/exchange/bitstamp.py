@@ -9,7 +9,8 @@ import logging
 from decimal import Decimal
 
 import aiohttp
-from sortedcontainers import SortedDict as sd
+from order_book import OrderBook
+
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection
@@ -64,12 +65,16 @@ class Bitstamp(Feed):
         ts = int(data['microtimestamp'])
         pair = symbol_exchange_to_std(chan.split('_')[-1])
 
-        book = {BID: sd(), ASK: sd()}
+        book = OrderBook(max_depth = self.max_depth)
+
         for side in (BID, ASK):
             for price, size, order_id in data[side + 's']:
                 price = Decimal(price)
                 size = Decimal(size)
-                book[side].get(price, sd())[order_id] = size
+                if price in book[side]:
+                    book[side][price][order_id] = size
+                else:
+                    book[side][price] = {order_id: size}
         self.l3_book[pair] = book
         await self.book_callback(self.l3_book[pair], L3_BOOK, pair, False, False, timestamp_normalize(self.id, ts), timestamp)
 
@@ -145,9 +150,10 @@ class Bitstamp(Feed):
         for r, pair in zip(results, pairs):
             std_pair = symbol_exchange_to_std(pair) if pair else 'BTC-USD'
             self.last_update_id[std_pair] = r['timestamp']
-            self.l2_book[std_pair] = {BID: sd(), ASK: sd()}
-            for s, side in (('bids', BID), ('asks', ASK)):
-                for update in r[s]:
+            self.l2_book[std_pair] = OrderBook(max_depth = self.max_depth)
+
+            for side in ('bids', 'asks'):
+                for update in r[side]:
                     price = Decimal(update[0])
                     amount = Decimal(update[1])
                     self.l2_book[std_pair][side][price] = amount
