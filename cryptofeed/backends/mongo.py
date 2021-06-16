@@ -23,9 +23,9 @@ class MongoCallback:
     async def write(self, feed: str, symbol: str, timestamp: float, receipt_timestamp: float, data: dict):
         if 'delta' in data:
             d = {'feed': feed, 'symbol': symbol, 'timestamp': timestamp, 'receipt_timestamp': receipt_timestamp, 'delta': data['delta'], 'bid': bson.BSON.encode(data['bid']), 'ask': bson.BSON.encode(data['ask'])}
-            await self.db[self.collection].insert_one(d)
+            return await self.db[self.collection].insert_one(d)
         else:
-            await self.db[self.collection].insert_one(data)
+            return await self.db[self.collection].insert_one(data)
 
 
 class TradeMongo(MongoCallback, BackendTradeCallback):
